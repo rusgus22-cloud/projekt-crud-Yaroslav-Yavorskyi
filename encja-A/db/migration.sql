@@ -5,3 +5,8 @@ CREATE TABLE IF NOT EXISTS tasks (
     priority INTEGER NOT NULL,
     status TEXT NOT NULL
 );
+
+AFTER TABLE tasks
+ADD COLUMN index INT;
+    
+    
