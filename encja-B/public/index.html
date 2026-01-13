@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Products</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+    <h1>Products</h1>
+
+    <form id="f">
+        <input id="name" placeholder="Name">
+        <input id="sku" placeholder="SKU">
+        <input id="price" type="number" step="0.01" placeholder="Price">
+        <input id="cat" placeholder="Category">
+        <button type="submit">Add product</button>
+    </form>
+
+    <ul id="list"></ul>
+</div>
+
+<script>
+async function load() {
+    const r = await fetch('/products');
+    const d = await r.json();
+    list.innerHTML = '';
+    d.forEach(p => {
+        list.innerHTML += `
+            <li>
+                <span>${p.name} – ${p.category} ($${p.price})</span>
+                <button class="delete" onclick="del(${p.id})">Delete</button>
+            </li>`;
+    });
+}
+
+f.onsubmit = async e => {
+    e.preventDefault();
+    await fetch('/products', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({
+            name: name.value,
+            sku: sku.value,
+            price: price.value,
+            category: cat.value
+        })
+    });
+    f.reset();
+    load();
+};
+
+async function del(id) {
+    await fetch('/products/' + id, { method: 'DELETE' });
+    load();
+}
+
+load();
+</script>
+
+</body>
+</html>

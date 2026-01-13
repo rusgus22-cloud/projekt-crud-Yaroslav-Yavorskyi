@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Tasks</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+    <h1>Tasks</h1>
+
+    <form id="f">
+        <input id="title" placeholder="Title">
+        <input id="desc" placeholder="Description">
+        <input id="prio" type="number" placeholder="Priority">
+        <input id="status" placeholder="Status">
+        <button type="submit">Add task</button>
+    </form>
+
+    <ul id="list"></ul>
+</div>
+
+<script>
+async function load() {
+    const r = await fetch('/tasks');
+    const d = await r.json();
+    list.innerHTML = '';
+    d.forEach(t => {
+        list.innerHTML += `
+            <li>
+                <span>${t.title} (${t.status})</span>
+                <button class="delete" onclick="del(${t.id})">Delete</button>
+            </li>`;
+    });
+}
+
+f.onsubmit = async e => {
+    e.preventDefault();
+    await fetch('/tasks', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({
+            title: title.value,
+            description: desc.value,
+            priority: prio.value,
+            status: status.value
+        })
+    });
+    f.reset();
+    load();
+};
+
+async function del(id) {
+    await fetch('/tasks/' + id, { method: 'DELETE' });
+    load();
+}
+
+load();
+</script>
+
+</body>
+</html>
