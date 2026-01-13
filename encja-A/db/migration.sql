@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS tasks (
 );
 
 ALTER TABLE tasks
-ADD COLUMN task_index INT;
+ADD COLUMN task_index INTEGER;
 
     
     
