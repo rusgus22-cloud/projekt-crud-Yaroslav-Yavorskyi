@@ -1,9 +1,44 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <title>Tasks</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+        }
+        .container {
+            max-width: 500px;
+            margin: 40px auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        form input, form button {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 8px;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+        .delete {
+            background: red;
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 4px 8px;
+        }
+    </style>
 </head>
 <body>
 
@@ -11,7 +46,7 @@
     <h1>Tasks</h1>
 
     <form id="f">
-        <input id="title" placeholder="Title">
+        <input id="title" placeholder="Title" required>
         <input id="desc" placeholder="Description">
         <input id="prio" type="number" placeholder="Priority">
         <input id="status" placeholder="Status">
@@ -22,24 +57,34 @@
 </div>
 
 <script>
+const f = document.getElementById('f');
+const list = document.getElementById('list');
+const title = document.getElementById('title');
+const desc = document.getElementById('desc');
+const prio = document.getElementById('prio');
+const status = document.getElementById('status');
+
 async function load() {
     const r = await fetch('/tasks');
     const d = await r.json();
     list.innerHTML = '';
-    d.forEach(t => {
+
+    d.forEach((t, i) => {
         list.innerHTML += `
             <li>
-                <span>${t.title} (${t.status})</span>
+                <span>${i + 1}. ${t.title} (${t.status})</span>
                 <button class="delete" onclick="del(${t.id})">Delete</button>
-            </li>`;
+            </li>
+        `;
     });
 }
 
 f.onsubmit = async e => {
     e.preventDefault();
+
     await fetch('/tasks', {
         method: 'POST',
-        headers: {'Content-Type':'application/json'},
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
             title: title.value,
             description: desc.value,
@@ -47,6 +92,7 @@ f.onsubmit = async e => {
             status: status.value
         })
     });
+
     f.reset();
     load();
 };
