@@ -6,7 +6,8 @@ CREATE TABLE IF NOT EXISTS tasks (
     status TEXT NOT NULL
 );
 
-AFTER TABLE tasks
-ADD COLUMN index INT;
+ALTER TABLE tasks
+ADD COLUMN task_index INT;
+
     
     
