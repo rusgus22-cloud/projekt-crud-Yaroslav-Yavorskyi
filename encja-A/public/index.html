@@ -11,6 +11,7 @@
     <h1>Tasks</h1>
 
     <form id="f">
+        <input id="index" type="number" placeholder="Index" required>
         <input id="title" placeholder="Title" required>
         <input id="desc" placeholder="Description">
         <input id="prio" type="number" placeholder="Priority">
@@ -24,6 +25,8 @@
 <script>
 const f = document.getElementById('f');
 const list = document.getElementById('list');
+
+const indexInput = document.getElementById('index');
 const title = document.getElementById('title');
 const desc = document.getElementById('desc');
 const prio = document.getElementById('prio');
@@ -34,11 +37,13 @@ async function load() {
     const d = await r.json();
     list.innerHTML = '';
 
-    d.forEach((t, i) => {
+    d.forEach(t => {
         list.innerHTML += `
             <li>
-                <span>${i + 1}. ${t.title} (${t.status})</span>
-                <button class="delete" onclick="del(${t.id})">Delete</button>
+                <span>
+                    ${t.task_index}. ${t.title} (${t.status})
+                </span>
+                <button onclick="del(${t.id})">Delete</button>
             </li>
         `;
     });
@@ -51,9 +56,10 @@ f.onsubmit = async e => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+            task_index: Number(indexInput.value),
             title: title.value,
             description: desc.value,
-            priority: prio.value,
+            priority: Number(prio.value),
             status: status.value
         })
     });
